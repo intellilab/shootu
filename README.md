@@ -1,22 +1,13 @@
-shootu
----
+# shootu
 
-Take a screenshot. Built with cross-platform Electron.
+Take a screenshot. Built with Electron.
 
-Development
----
-``` sh
-$ npm run dev
-```
+```bash
+# compile pages for development
+$ pnpm dev
+# or build pages in production mode
+$ pnpm build
 
-Building
----
-```sh
-$ npm run build
-```
-
-Lint
----
-``` sh
-$ npm run lint
+# start electron
+$ pnpm start
 ```

@@ -1,6 +1,5 @@
 import path from 'path';
-import url from 'url';
-import { app, BrowserWindow, screen, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, ipcMain, desktopCapturer } from 'electron';
 
 let forceQuit = false;
 
@@ -11,8 +10,24 @@ app.on('before-quit', () => {
   forceQuit = true;
 });
 
-ipcMain.on('log', (e, data) => {
+ipcMain.on('log', (_, data) => {
   log(data);
+});
+
+ipcMain.handle('getSources', async () => {
+  const display = screen.getPrimaryDisplay();
+  const sources = await desktopCapturer.getSources({
+    types: ['window', 'screen'],
+  });
+  return {
+    size: display.size,
+    sources: sources.map((item) => ({
+      id: item.id,
+      name: item.name,
+      displayId: item.display_id,
+      appIcon: item.appIcon,
+    })),
+  };
 });
 
 function log(data) {
@@ -20,8 +35,14 @@ function log(data) {
 }
 
 function createWindow(options) {
-  const win = new BrowserWindow(options);
-  win.on('close', e => {
+  const win = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+    ...options,
+  });
+  win.on('close', (e) => {
     if (forceQuit) return;
     e.preventDefault();
     win.hide();
@@ -30,20 +51,7 @@ function createWindow(options) {
 }
 
 function init() {
-  const winShot = createWindow({
-    show: false,
-  });
-  winShot.loadURL(url.format({
-    pathname: path.resolve(__dirname, 'shooter.html'),
-    protocol: 'file:',
-    slashes: true,
-  }));
-  winShot.webContents.once('did-finish-load', () => {
-    app.on('activate', () => {
-      log('screenshot start');
-      winShot.webContents.send('takeScreenshot');
-    });
-  });
+  const base = path.join(app.getAppPath(), 'dist');
   const mainScreen = screen.getPrimaryDisplay();
   const winImage = createWindow({
     x: -10,
@@ -55,14 +63,19 @@ function init() {
     show: false,
   });
   winImage.setAlwaysOnTop(true, 'screen-saver');
-  winImage.loadURL(url.format({
-    pathname: path.resolve(__dirname, 'viewer.html'),
-    protocol: 'file:',
-    slashes: true,
-  }));
-  ipcMain.on('tokeScreenshot', (e, imageUrl) => {
-    log('screenshot ready');
-    winImage.webContents.send('showImage', imageUrl);
+  winImage.loadFile(path.join(base, 'viewer.html'));
+  winImage.webContents.once('did-finish-load', () => {
+    app.on('activate', () => {
+      log('screenshot start');
+      winImage.webContents.send('takeScreenshot');
+    });
+  });
+  ipcMain.on('hideImage', () => {
+    log('hide screenshot');
+    winImage.hide();
+  });
+  ipcMain.on('showImage', () => {
+    log('show screenshot');
     winImage.show();
   });
 }

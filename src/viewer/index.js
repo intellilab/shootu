@@ -1,15 +1,14 @@
-import { ipcRenderer } from 'electron';
-import { createElement } from '../utils';
-import './style.css';
+import { setup } from 'twind';
+import App from './app.svelte';
 
-const root = createElement('div', {
-  id: 'root',
+setup({
+  // preflight: (preflight) => ({
+  //   ...preflight,
+  // }),
 });
-document.body.appendChild(root);
 
-ipcRenderer.on('showImage', (e, url) => {
-  root.innerHTML = '';
-  const img = new Image();
-  img.src = url;
-  root.appendChild(img);
+const root = document.createElement('div');
+document.body.append(root);
+new App({
+  target: root,
 });
