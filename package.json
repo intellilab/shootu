@@ -7,36 +7,17 @@
   "main": "dist",
   "license": "ISC",
   "scripts": {
-    "dev": "gulp watch",
+    "dev": "gulp dev",
     "prebuild": "gulp clean",
     "build": "gulp build",
     "lint": "gulp lint",
     "start": "electron ."
   },
   "devDependencies": {
-    "autoprefixer": "^7.1.1",
-    "babel-core": "^6.24.1",
-    "babel-eslint": "^7.2.3",
-    "babel-loader": "^7.0.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.5.1",
-    "babili-webpack-plugin": "^0.1.1",
-    "css-loader": "^0.28.4",
-    "del": "^2.2.2",
-    "electron": "^1.6.10",
-    "es6-promisify": "^5.0.0",
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb-base": "^11.2.0",
-    "eslint-import-resolver-webpack": "^0.8.1",
-    "eslint-plugin-import": "^2.3.0",
-    "extract-text-webpack-plugin": "^2.1.0",
-    "gulp": "^3.9.1",
-    "gutil": "^1.6.4",
-    "html-webpack-plugin": "^2.28.0",
-    "postcss-loader": "^2.0.5",
-    "precss": "^1.4.0",
-    "style-loader": "^0.18.2",
-    "webpack": "^2.6.1",
-    "webpack-bundle-size-analyzer": "^2.7.0"
+    "@gera2ld/plaid": "^2.5.2",
+    "@gera2ld/plaid-webpack": "^2.5.0",
+    "del": "^6.1.1",
+    "electron": "^19.0.4",
+    "gulp": "^4.0.2"
   }
 }

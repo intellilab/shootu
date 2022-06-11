@@ -1,31 +1,5 @@
-const fs = require('fs');
-const promisify = require('es6-promisify');
 const gulp = require('gulp');
 const del = require('del');
-const webpack = require('webpack');
-const gutil = require('gutil');
-const webpackConfig = require('./scripts/webpack.conf');
-const pkg = require('./package.json');
-const readFile = promisify(fs.readFile);
-
-function webpackCallback(err, stats) {
-  if (err) {
-    gutil.log('[FATAL]', err);
-    return;
-  }
-  if (stats.hasErrors()) {
-    gutil.log('[ERROR] webpack compilation failed\n', stats.toJson().errors.join('\n'));
-    return;
-  }
-  if (stats.hasWarnings()) {
-    gutil.log('[WARNING] webpack compilation has warnings\n', stats.toJson().warnings.join('\n'));
-  }
-  stats.stats.forEach(stat => {
-    const timeCost = (stat.endTime - stat.startTime) / 1000;
-    const chunks = Object.keys(stat.compilation.namedChunks).join(' ');
-    gutil.log(`Webpack built: [${timeCost.toFixed(3)}s] ${chunks}`);
-  });
-}
 
 const DIST = 'dist';
 const paths = {
@@ -33,20 +7,28 @@ const paths = {
     'src/assets/**',
   ],
 };
-const buildTasks = ['copy'];
 
-gulp.task('clean', () => del('dist'));
+function clean() {
+  return del(DIST);
+}
 
-gulp.task('copy', () =>
-  gulp.src(paths.copy, { base: 'src' })
-  .pipe(gulp.dest(DIST))
-);
+function copy() {
+  return gulp.src(paths.copy, { base: 'src' })
+    .pipe(gulp.dest(DIST));
+}
 
-gulp.task('watch', buildTasks.concat(['js-dev']), () => {
-  gulp.watch(paths.copy, ['copy']);
-});
+async function jsDev() {
+  require('@gera2ld/plaid-webpack/bin/develop')();
+}
 
-gulp.task('build', buildTasks.concat(['js-prd']));
+async function jsProd() {
+  return require('@gera2ld/plaid-webpack/bin/build')({
+    api: true,
+    keep: true,
+  });
+}
 
-gulp.task('js-dev', () => webpack(webpackConfig).watch({}, webpackCallback));
-gulp.task('js-prd', () => webpack(webpackConfig, webpackCallback));
+exports.clean = clean;
+exports.copy = copy;
+exports.dev = gulp.series(copy, jsDev);
+exports.build = gulp.series(clean, copy, jsProd);
