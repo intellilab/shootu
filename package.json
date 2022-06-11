@@ -7,6 +7,7 @@
   "main": "dist",
   "license": "ISC",
   "scripts": {
+    "prepare": "husky install",
     "dev": "gulp dev",
     "prebuild": "gulp clean",
     "build": "gulp build",
@@ -19,7 +20,8 @@
     "@gera2ld/plaid-webpack-svelte": "~2.5.3-alpha.0",
     "del": "^6.1.1",
     "electron": "^19.0.4",
-    "gulp": "^4.0.2"
+    "gulp": "^4.0.2",
+    "husky": "^8.0.1"
   },
   "dependencies": {
     "svelte": "^3.48.0",
