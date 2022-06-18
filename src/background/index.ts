@@ -54,13 +54,15 @@ function init() {
   const base = path.join(app.getAppPath(), 'dist');
   const mainScreen = screen.getPrimaryDisplay();
   const winImage = createWindow({
-    x: -10,
-    y: -10,
-    width: mainScreen.bounds.width + 20,
-    height: mainScreen.bounds.height + 20,
+    roundedCorners: false,
+    x: 0,
+    y: 0,
+    width: mainScreen.bounds.width,
+    height: mainScreen.bounds.height,
     frame: false,
     enableLargerThanScreen: true,
     show: false,
+    transparent: true,
   });
   winImage.setAlwaysOnTop(true, 'screen-saver');
   winImage.loadFile(path.join(base, 'viewer.html'));

@@ -4,7 +4,7 @@ import App from './app.svelte';
 setup({
   preflight: (preflight) => ({
     ...preflight,
-    '.mask > *': apply`absolute bg-gray-900 opacity-50 inset-0`,
+    '.mask > *': apply`absolute bg-gray-900 bg-opacity-50 inset-0`,
   }),
 });
 

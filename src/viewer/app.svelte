@@ -11,34 +11,40 @@
     y1: number;
     x2: number;
     y2: number;
-  } = null;
+  } = { x1: 0, y1: 0, x2: 0, y2: 0 };
 
-  async function handleScreenshot() {
-    ipcRenderer.send('hideImage');
-    const blob = await takeScreenShot();
+  function hideImage() {
     if (imageUrl) URL.revokeObjectURL(imageUrl);
-    imageUrl = URL.createObjectURL(blob);
-    ipcRenderer.send('showImage');
+    imageUrl = null;
+    ipcRenderer.send('hideImage');
   }
 
-  function handleShowImage(_, url: string) {
-    imageUrl = url;
+  async function handleScreenshot() {
+    hideImage();
+    const blob = await takeScreenShot();
+    const url = URL.createObjectURL(blob);
+    const image = new Image();
+    image.src = url;
+    image.onload = () => {
+      imageUrl = url;
+    };
+    ipcRenderer.send('showImage');
   }
 
   function handleMouseDown(e: MouseEvent) {
     el.addEventListener('mousemove', handleMouseMove);
     el.addEventListener('mouseup', handleMouseUp);
     rect = {
-      x1: e.clientX - 10,
-      y1: e.clientY - 10,
-      x2: e.clientX - 10,
-      y2: e.clientY - 10,
+      x1: e.clientX,
+      y1: e.clientY,
+      x2: e.clientX,
+      y2: e.clientY,
     };
   }
 
   function handleMouseMove(e: MouseEvent) {
-    rect.x2 = e.clientX - 10;
-    rect.y2 = e.clientY - 10;
+    rect.x2 = e.clientX;
+    rect.y2 = e.clientY;
   }
 
   function handleMouseUp(e: MouseEvent) {
@@ -54,16 +60,14 @@
 
   onMount(() => {
     ipcRenderer.on('takeScreenshot', handleScreenshot);
-    ipcRenderer.on('showImage', handleShowImage);
     return () => {
       ipcRenderer.removeListener('takeScreenshot', handleScreenshot);
-      ipcRenderer.removeListener('showImage', handleShowImage);
     };
   });
 </script>
 
 <div
-  class={tw`absolute inset-[10px] cursor-crosshair`}
+  class={tw`absolute inset-0 cursor-crosshair`}
   on:mousedown={handleMouseDown}
   bind:this={el}
 >
