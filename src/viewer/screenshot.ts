@@ -1,7 +1,10 @@
 import { ipcRenderer } from 'electron';
 
 export async function takeScreenShot() {
-  const { size, sources } = await ipcRenderer.invoke('getSources');
+  const { size, sources } = await ipcRenderer.invoke('getSources') as {
+    size: { width: number; height: number };
+    sources: Array<{ id: string }>;
+  };
   const width = size.width * devicePixelRatio;
   const height = size.height * devicePixelRatio;
   const sourceId = sources.find((item) => item.id.startsWith('screen:')).id;
@@ -17,10 +20,10 @@ export async function takeScreenShot() {
         minHeight: height,
         maxHeight: height,
       },
-    },
+    } as any,
   });
   ipcRenderer.send('log', 'stream ready');
-  const video = await new Promise((resolve, reject) => {
+  const video = await new Promise<HTMLVideoElement>((resolve, reject) => {
     const video = document.createElement('video');
     document.body.append(video);
     video.srcObject = stream;
@@ -41,8 +44,8 @@ export async function takeScreenShot() {
   return data;
 }
 
-function getImage(video) {
-  return new Promise((resolve) => {
+function getImage(video: HTMLVideoElement) {
+  return new Promise<Blob>((resolve) => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = video.width;

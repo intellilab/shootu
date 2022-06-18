@@ -11,17 +11,19 @@
     "dev": "gulp dev",
     "prebuild": "gulp clean",
     "build": "gulp build",
-    "lint": "eslint --ext .js,.svelte .",
+    "lint": "eslint --ext .ts,.svelte .",
     "start": "electron ."
   },
   "devDependencies": {
-    "@gera2ld/plaid": "~2.5.3-alpha.0",
-    "@gera2ld/plaid-webpack": "~2.5.3-alpha.0",
-    "@gera2ld/plaid-webpack-svelte": "~2.5.3-alpha.0",
+    "@gera2ld/plaid": "~2.5.3",
+    "@gera2ld/plaid-common-ts": "~2.5.1",
+    "@gera2ld/plaid-webpack": "~2.5.3",
+    "@gera2ld/plaid-webpack-svelte": "~2.5.4",
     "del": "^6.1.1",
     "electron": "^19.0.4",
     "gulp": "^4.0.2",
-    "husky": "^8.0.1"
+    "husky": "^8.0.1",
+    "svelte-preprocess": "^4.10.7"
   },
   "dependencies": {
     "svelte": "^3.48.0",

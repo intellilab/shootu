@@ -30,11 +30,11 @@ ipcMain.handle('getSources', async () => {
   };
 });
 
-function log(data) {
+function log(data: unknown) {
   console.log(new Date(), data);
 }
 
-function createWindow(options) {
+function createWindow(options: Electron.BrowserWindowConstructorOptions) {
   const win = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
